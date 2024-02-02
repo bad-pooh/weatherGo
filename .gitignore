@@ -1,0 +1,7 @@
+.vscode/
+go.sum
+*.o
+*.a
+*.test
+*.out
+*.exe
