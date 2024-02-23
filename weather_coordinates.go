@@ -5,6 +5,6 @@ type Coordinates struct {
 	longitude float64
 }
 
-func Get_gps_coordinates() Coordinates {
+func GetGpsCoordinates() Coordinates {
 	return Coordinates{49.2, 28.4}
 }

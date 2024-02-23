@@ -17,7 +17,7 @@ type PlainFileWeatherStorage struct {
 
 func (p *PlainFileWeatherStorage) save(weather *Weather) {
 	now := time.Now().Format("2006-01-02 15:04:05")
-	formatted_weather := Format_weather(weather)
+	formattedWeather := FormatWeather(weather)
 
 	file, err := os.OpenFile(p.file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -26,7 +26,7 @@ func (p *PlainFileWeatherStorage) save(weather *Weather) {
 	}
 	defer file.Close()
 
-	_, err = file.WriteString(fmt.Sprintf("%s\n%s\n", now, formatted_weather))
+	_, err = file.WriteString(fmt.Sprintf("%s\n%s\n", now, formattedWeather))
 	if err != nil {
 		fmt.Println("Error writing to file:", err)
 	}
@@ -42,17 +42,17 @@ type HistoryRecord struct {
 }
 
 func (j *JSONFileWeatherStorage) save(weather *Weather) {
-	records := j.read_history()
+	records := j.readHistory()
 	now := time.Now().Format("2006-01-02 15:04:05")
 	newRecord := HistoryRecord{
 		Date:    now,
-		Weather: Format_weather(weather),
+		Weather: FormatWeather(weather),
 	}
 	records = append(records, newRecord)
-	j.write_history(&records)
+	j.writeHistory(&records)
 }
 
-func (j *JSONFileWeatherStorage) read_history() []HistoryRecord {
+func (j *JSONFileWeatherStorage) readHistory() []HistoryRecord {
 	file, err := os.OpenFile(j.file, os.O_RDONLY, 0644)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -69,7 +69,7 @@ func (j *JSONFileWeatherStorage) read_history() []HistoryRecord {
 	return records
 }
 
-func (j *JSONFileWeatherStorage) write_history(records *[]HistoryRecord) {
+func (j *JSONFileWeatherStorage) writeHistory(records *[]HistoryRecord) {
 	file, err := os.OpenFile(j.file, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -91,6 +91,6 @@ func (j *JSONFileWeatherStorage) write_history(records *[]HistoryRecord) {
 	}
 }
 
-func Save_weather(w *Weather, ws WeatherStorage) {
+func SaveWeather(w *Weather, ws WeatherStorage) {
 	ws.save(w)
 }

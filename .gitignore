@@ -1,4 +1,5 @@
 .vscode/
+.idea/
 go.sum
 *.o
 *.a

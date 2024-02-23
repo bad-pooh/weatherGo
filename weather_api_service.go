@@ -24,11 +24,11 @@ const (
 )
 
 type Weather struct {
-	temperature  Celsius
-	weather_type WeatherType
-	sunrise      time.Time
-	sunset       time.Time
-	city         string
+	temperature Celsius
+	weatherType WeatherType
+	sunrise     time.Time
+	sunset      time.Time
+	city        string
 }
 
 type WeatherData struct {
@@ -60,7 +60,7 @@ type WeatherData struct {
 	Name string `json:"name"`
 }
 
-func get_openweather_response(c *Coordinates) string {
+func getOpenweatherResponse(c *Coordinates) string {
 	url := fmt.Sprintf(
 		"https://api.openweathermap.org/data/2.5/weather?lat=%f&lon=%f&appid=%s&lang=ru&units=metric",
 		c.latitude,
@@ -82,7 +82,7 @@ func get_openweather_response(c *Coordinates) string {
 	return string(body)
 }
 
-func parse_openweather_response(r string) Weather {
+func parseOpenweatherResponse(r string) Weather {
 	var data WeatherData
 	err := json.Unmarshal([]byte(r), &data)
 	if err != nil {
@@ -90,15 +90,15 @@ func parse_openweather_response(r string) Weather {
 	}
 
 	return Weather{
-		temperature:  Celsius(data.Main.Temp),
-		weather_type: parse_weather_type(&data),
-		sunrise:      time.Unix(data.Sys.Sunrise, 0),
-		sunset:       time.Unix(data.Sys.Sunset, 0),
-		city:         data.Name}
+		temperature: Celsius(data.Main.Temp),
+		weatherType: parseWeatherType(&data),
+		sunrise:     time.Unix(data.Sys.Sunrise, 0),
+		sunset:      time.Unix(data.Sys.Sunset, 0),
+		city:        data.Name}
 }
 
-func parse_weather_type(d *WeatherData) WeatherType {
-	weather_types := []struct {
+func parseWeatherType(d *WeatherData) WeatherType {
+	weatherTypes := []struct {
 		ID   string
 		Type WeatherType
 	}{
@@ -111,7 +111,7 @@ func parse_weather_type(d *WeatherData) WeatherType {
 		{"80", CLOUDS},
 	}
 
-	for _, w := range weather_types {
+	for _, w := range weatherTypes {
 		if strings.HasPrefix(fmt.Sprint(d.Weather[0].ID), w.ID) {
 			return w.Type
 		}
@@ -119,7 +119,7 @@ func parse_weather_type(d *WeatherData) WeatherType {
 	panic("Unknown weather type")
 }
 
-func Get_weather(c *Coordinates) Weather {
-	response := get_openweather_response(c)
-	return parse_openweather_response(response)
+func GetWeather(c *Coordinates) Weather {
+	response := getOpenweatherResponse(c)
+	return parseOpenweatherResponse(response)
 }
